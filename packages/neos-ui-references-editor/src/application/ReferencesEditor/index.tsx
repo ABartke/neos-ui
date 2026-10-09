@@ -117,6 +117,7 @@ export const createReferencesEditor = () => (props) => {
                 dimensionValues={dimension}
                 // todo
                 startingPoint={'/<Neos.Neos:Sites>/'}
+                allowedNodeTypes={fetch__referencesSummary.value?.allowedNodeTypes ?? undefined}
                 editor$={editor$}
             />
         )

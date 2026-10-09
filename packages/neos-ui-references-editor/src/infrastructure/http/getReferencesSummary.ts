@@ -17,6 +17,8 @@ type GetReferencesSummaryQueryResultEnvelope =
             }[],
             propertySchema?: Record<string, any>,
             constraints?: Record<string, any>,
+            // names of the node types allowed by the constraints, null if all are allowed
+            allowedNodeTypes?: string[] | null,
         }
     } | {
         error: {

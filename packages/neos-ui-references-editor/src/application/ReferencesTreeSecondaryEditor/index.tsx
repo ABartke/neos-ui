@@ -9,11 +9,12 @@ interface ReferencesTreeSecondaryEditorProps {
     workspaceName: string;
     dimensionValues: any;
     startingPoint: string;
+    allowedNodeTypes?: string[];
     editor$: State<Editor>
 }
 
 export const ReferencesTreeSecondaryEditor = (props: ReferencesTreeSecondaryEditorProps) => {
-    const {workspaceName, dimensionValues, startingPoint, editor$} = props;
+    const {workspaceName, dimensionValues, startingPoint, allowedNodeTypes, editor$} = props;
 
     const onSelectTreeNode = async (nodeId: string) => {
         if (editor$.current.getSelectedNodeIds().includes(nodeId)) {
@@ -40,6 +41,7 @@ export const ReferencesTreeSecondaryEditor = (props: ReferencesTreeSecondaryEdit
             // todo options configurable
             loadingDepth={4}
             baseNodeTypeFilter={''}
+            allowedNodeTypes={allowedNodeTypes}
             options={{enableSearch: true}}
             selectedTreeNodeIds={editor.getSelectedNodeIds()}
             onSelect={onSelectTreeNode}

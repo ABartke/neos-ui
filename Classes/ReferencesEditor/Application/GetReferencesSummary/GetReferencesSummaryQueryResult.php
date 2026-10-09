@@ -27,7 +27,14 @@ final class GetReferencesSummaryQueryResult implements \JsonSerializable
     public function __construct(
         public readonly array $references,
         public readonly ?array $propertySchema,
-        public readonly ?array $constraints
+        public readonly ?array $constraints,
+        /**
+         * Names of the node types that can be referenced according to the constraints.
+         * Null, if the reference allows every node type.
+         *
+         * @var list<string>|null
+         */
+        public readonly ?array $allowedNodeTypes = null
     ) {
     }
 

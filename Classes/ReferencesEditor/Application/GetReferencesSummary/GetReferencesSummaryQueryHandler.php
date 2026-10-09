@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Neos\Neos\Ui\ReferencesEditor\Application\GetReferencesSummary;
 
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\Core\NodeType\ConstraintCheck;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -68,7 +70,36 @@ final class GetReferencesSummaryQueryHandler
             references: $references,
             propertySchema: $sourceReferenceSchema["properties"] ?? null,
             constraints: $sourceReferenceSchema["constraints"] ?? null,
+            allowedNodeTypes: $this->findAllowedNodeTypeNames(
+                $contentRepository->getNodeTypeManager(),
+                $sourceReferenceSchema["constraints"]["nodeTypes"] ?? null
+            ),
         );
+    }
+
+    /**
+     * Evaluates the `constraints.nodeTypes` of a reference like the command handler does, to know which node types
+     * can be referenced and the Ui can disable the others.
+     *
+     * Note that the Ui treats every subtype of a listed node type as allowed.
+     *
+     * @param array<string,bool>|null $nodeTypeConstraints
+     * @return list<string>|null null if there are no constraints
+     */
+    private function findAllowedNodeTypeNames(NodeTypeManager $nodeTypeManager, ?array $nodeTypeConstraints): ?array
+    {
+        if (!$nodeTypeConstraints) {
+            return null;
+        }
+
+        $constraintCheck = ConstraintCheck::create($nodeTypeConstraints);
+        $allowedNodeTypeNames = [];
+        foreach ($nodeTypeManager->getNodeTypes(false) as $nodeType) {
+            if ($constraintCheck->isNodeTypeAllowed($nodeType)) {
+                $allowedNodeTypeNames[] = $nodeType->name->value;
+            }
+        }
+        return $allowedNodeTypeNames;
     }
 
     private function createBreadcrumbsForNode(NodeService $nodeService, Node $node): Breadcrumbs
