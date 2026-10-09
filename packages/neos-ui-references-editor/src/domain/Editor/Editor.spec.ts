@@ -256,15 +256,11 @@ describe('Editor', () => {
 
         editor = editor.withSelectedTargetNodeId('mySecondTarget');
         editor = editor.withDiscard();
-        editor = editor.withAddedReferencePresentation({
-            targetNodeId: 'mySecondTarget',
-            properties: null,
-            presentation: {
-                label: 'mySecondTarget',
-                breadcrumbs: [],
-                icon: 'question',
-                uri: 'node://mySecondTarget'
-            }
+        editor = editor.withAddedReferencePresentation('mySecondTarget', {
+            label: 'mySecondTarget',
+            breadcrumbs: [],
+            icon: 'question',
+            uri: 'node://mySecondTarget'
         });
 
         expect(editor.getReferences()).toStrictEqual({
@@ -300,15 +296,11 @@ describe('Editor', () => {
         );
 
         editor = editor.withSelectedTargetNodeId('mySecondTarget');
-        editor = editor.withAddedReferencePresentation({
-            targetNodeId: 'mySecondTarget',
-            properties: null,
-            presentation: {
-                label: 'mySecondTarget',
-                breadcrumbs: [],
-                icon: 'question',
-                uri: 'node://mySecondTarget'
-            }
+        editor = editor.withAddedReferencePresentation('mySecondTarget', {
+            label: 'mySecondTarget',
+            breadcrumbs: [],
+            icon: 'question',
+            uri: 'node://mySecondTarget'
         });
         editor = editor.withDiscard();
 
@@ -346,15 +338,11 @@ describe('Editor', () => {
 
         editor = editor.withSelectedTargetNodeId('mySecondTarget');
         editor = editor.withApply();
-        editor = editor.withAddedReferencePresentation({
-            targetNodeId: 'mySecondTarget',
-            properties: null,
-            presentation: {
-                label: 'mySecondTarget',
-                breadcrumbs: [],
-                icon: 'question',
-                uri: 'node://mySecondTarget'
-            }
+        editor = editor.withAddedReferencePresentation('mySecondTarget', {
+            label: 'mySecondTarget',
+            breadcrumbs: [],
+            icon: 'question',
+            uri: 'node://mySecondTarget'
         });
 
         expect(editor.getReferences()).toStrictEqual({
@@ -370,7 +358,7 @@ describe('Editor', () => {
             },
             'mySecondTarget': {
                 targetNodeId: 'mySecondTarget',
-                properties: null,
+                properties: undefined,
                 presentation: {
                     label: 'mySecondTarget',
                     breadcrumbs: [],
@@ -400,15 +388,11 @@ describe('Editor', () => {
         );
 
         editor = editor.withSelectedTargetNodeId('mySecondTarget');
-        editor = editor.withAddedReferencePresentation({
-            targetNodeId: 'mySecondTarget',
-            properties: null,
-            presentation: {
-                label: 'mySecondTarget',
-                breadcrumbs: [],
-                icon: 'question',
-                uri: 'node://mySecondTarget'
-            }
+        editor = editor.withAddedReferencePresentation('mySecondTarget', {
+            label: 'mySecondTarget',
+            breadcrumbs: [],
+            icon: 'question',
+            uri: 'node://mySecondTarget'
         });
         editor = editor.withApply();
 
@@ -425,7 +409,7 @@ describe('Editor', () => {
             },
             'mySecondTarget': {
                 targetNodeId: 'mySecondTarget',
-                properties: null,
+                properties: undefined,
                 presentation: {
                     label: 'mySecondTarget',
                     breadcrumbs: [],

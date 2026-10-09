@@ -126,7 +126,8 @@ test(`The "clear" action should remove pending changes for the currently focused
             someOtherContextPath: {
                 someProperty: 'value'
             }
-        }
+        },
+        transientChanges: []
     };
     const focusedNodeContextPath = 'someContextPath';
     const nextState1 = reducer(state, actions.clear(focusedNodeContextPath));
@@ -141,7 +142,8 @@ test(`The "clear" action should reset the shouldPromptToHandleUnappliedChanges s
         shouldPromptToHandleUnappliedChanges: true,
         valuesByNodePath: {
             someContextPath: {}
-        }
+        },
+        transientChanges: []
     };
     const focusedNodeContextPath = 'someContextPath';
     const nextState = reducer(state, actions.clear(focusedNodeContextPath));
@@ -158,7 +160,8 @@ test(`The "discard" action should remove pending changes for the currently focus
             someOtherContextPath: {
                 someProperty: 'value'
             }
-        }
+        },
+        transientChanges: []
     };
     const focusedNodeContextPath = 'someContextPath';
     const nextState1 = reducer(state, actions.discard(focusedNodeContextPath));
@@ -173,12 +176,25 @@ test(`The "discard" action should reset the shouldPromptToHandleUnappliedChanges
         shouldPromptToHandleUnappliedChanges: true,
         valuesByNodePath: {
             someContextPath: {}
-        }
+        },
+        transientChanges: []
     };
     const focusedNodeContextPath = 'someContextPath';
     const nextState = reducer(state, actions.discard(focusedNodeContextPath));
 
     expect(nextState.shouldPromptToHandleUnappliedChanges).toBe(false);
+});
+
+test.each(['clear', 'discard'])(`The "%s" action should only remove transient changes of the currently focused node.`, (actionName) => {
+    const changeOfFocusedNode = {type: 'Neos.Neos.Ui:Reference', subject: 'someContextPath', payload: {}};
+    const changeOfOtherNode = {type: 'Neos.Neos.Ui:Reference', subject: 'someOtherContextPath', payload: {}};
+    const state = {
+        valuesByNodePath: {},
+        transientChanges: [changeOfFocusedNode, changeOfOtherNode]
+    };
+    const nextState = reducer(state, actions[actionName]('someContextPath'));
+
+    expect(nextState.transientChanges).toEqual([changeOfOtherNode]);
 });
 
 test(`The "escape" action should reset the shouldPromptToHandleUnappliedChanges state to true`, () => {
