@@ -34,8 +34,9 @@ class RenderedNodeDomAddress implements \JsonSerializable
     public static function fromArray(array $array): self
     {
         $me = new self();
-        $me->contextPath = $array['contextPath'];
-        $me->fusionPath = $array['fusionPath'];
+        $me->contextPath = $array['contextPath'] ?? null;
+        // document nodes have no fusion path
+        $me->fusionPath = $array['fusionPath'] ?? null;
         return $me;
     }
 
