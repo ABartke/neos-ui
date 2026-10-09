@@ -19,10 +19,12 @@ use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferencesToWrit
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceToWrite;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
+use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Ui\Domain\Model\AbstractChange;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\ReloadContentOutOfBand;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
 use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
+use Neos\Neos\Ui\Domain\Service\NodePropertyConversionService;
 
 /**
  * Changes a reference on a node
@@ -32,6 +34,9 @@ use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
  */
 class Reference extends AbstractChange
 {
+    #[Flow\Inject]
+    protected NodePropertyConversionService $nodePropertyConversionService;
+
     public function __construct(
         // private Node $subject, lol todo
         private string $referenceName,
@@ -110,15 +115,45 @@ class Reference extends AbstractChange
         }
     }
 
+    /**
+     * Convert the raw values sent by the Ui to the types declared for the reference properties,
+     * like it is done for node properties in {@see Property}.
+     *
+     * @param array<string,mixed> $rawProperties
+     * @param array<string,array<string,mixed>> $propertySchema
+     * @return array<string,mixed>
+     */
+    private function convertReferenceProperties(array $rawProperties, array $propertySchema): array
+    {
+        $convertedProperties = [];
+        foreach ($rawProperties as $propertyName => $rawValue) {
+            $propertyType = $propertySchema[$propertyName]['type'] ?? 'string';
+            // the Ui already sends bool and numbers as native json types, only strings and arrays need conversion
+            $convertedValue = is_string($rawValue) || is_array($rawValue) || $rawValue === null
+                ? $this->nodePropertyConversionService->convert($propertyType, $rawValue)
+                : $rawValue;
+            if ($convertedValue === null) {
+                continue;
+            }
+            $convertedProperties[$propertyName] = $convertedValue;
+        }
+        return $convertedProperties;
+    }
+
     private function handleNodeReferenceChange(): void
     {
         $contentRepository = $this->contentRepositoryRegistry->get($this->subject->contentRepositoryId);
+
+        $referencePropertySchema = $this->getNodeType($this->subject)
+            ?->getReferences()[$this->referenceName]['properties'] ?? [];
 
         $nodeReferencesToWrite = [];
         foreach ($this->serializedReferences as $serializedReference) {
             $nodeReferencesToWrite[] = NodeReferenceToWrite::fromTargetAndProperties(
                 target: NodeAggregateId::fromString($serializedReference['targetNodeId']),
-                properties: PropertyValuesToWrite::fromArray($serializedReference['properties'] ?? [])
+                properties: PropertyValuesToWrite::fromArray(
+                    $this->convertReferenceProperties($serializedReference['properties'] ?? [], $referencePropertySchema)
+                )
             );
         }
 
