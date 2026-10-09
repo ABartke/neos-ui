@@ -181,6 +181,10 @@ export class Editor {
         return this.data.propertySchema ?? {};
     }
 
+    public hasPropertySchema(): boolean {
+        return Object.keys(this.getPropertySchema()).length > 0;
+    }
+
     public getReferencePropertyValue(propertyName: string): any {
         return (this.data.transientReferencePropertyValues ?? this.data.transientValues ?? this.data.initialValues)[this.data.selectedReferenceId]?.properties?.[propertyName]
     }

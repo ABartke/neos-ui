@@ -13,13 +13,15 @@ export const HoverActions: React.FC<PropsWithChildren<HoverActionsProps>> = ({ch
         <div className={style.wrapper}>
             {children}
             <div className={style.actions}>
-                <IconButton
-                    icon="arrows-left-right-to-line"
-                    hoverStyle="brand"
-                    title="Edit"
-                    onClick={onEdit}
-                    size="regular"
-                />
+                {onEdit && (
+                    <IconButton
+                        icon="arrows-left-right-to-line"
+                        hoverStyle="brand"
+                        title="Edit"
+                        onClick={onEdit}
+                        size="regular"
+                    />
+                )}
                 <IconButton
                     icon="trash"
                     hoverStyle="warn"

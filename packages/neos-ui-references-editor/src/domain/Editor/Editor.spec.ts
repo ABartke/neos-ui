@@ -12,6 +12,17 @@ describe('Editor', () => {
         expect(editor.getChange('nodeid', 'myRef')).toBe(null);
     })
 
+    test('has property schema only if the reference declares properties', () => {
+        const withoutSchema = Editor.fromLoadingState(0).withReferencesAndConfiguration({}, {}, undefined);
+        const withEmptySchema = Editor.fromLoadingState(0).withReferencesAndConfiguration({}, {}, {});
+        const withSchema = Editor.fromLoadingState(0).withReferencesAndConfiguration({}, {}, {note: {type: 'string'}});
+
+        expect(Editor.fromLoadingState(0).hasPropertySchema()).toBe(false);
+        expect(withoutSchema.hasPropertySchema()).toBe(false);
+        expect(withEmptySchema.hasPropertySchema()).toBe(false);
+        expect(withSchema.hasPropertySchema()).toBe(true);
+    })
+
     test('load references', () => {
         const editor = Editor.fromLoadingState(1).withReferencesAndConfiguration(
             {

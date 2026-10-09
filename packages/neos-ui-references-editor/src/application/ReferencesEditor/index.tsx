@@ -136,7 +136,12 @@ export const createReferencesEditor = () => (props) => {
                     />)) : Object.values(editor.getReferences()).map(reference => {
                         return (
                             reference.presentation
-                                ? <HoverActions key={reference.targetNodeId} onEdit={() => onEdit(reference.targetNodeId)} onDelete={() => onDelete(reference.targetNodeId)}>
+                                ? <HoverActions
+                                    key={reference.targetNodeId}
+                                    // references without declared properties have nothing to edit
+                                    onEdit={editor.hasPropertySchema() ? () => onEdit(reference.targetNodeId) : undefined}
+                                    onDelete={() => onDelete(reference.targetNodeId)}
+                                >
                                     <IconCard
                                         icon={reference.presentation.icon}
                                         title={reference.presentation.label}
