@@ -40,6 +40,7 @@ export const ReferencesTreeSecondaryEditor = (props: ReferencesTreeSecondaryEdit
             // todo options configurable
             loadingDepth={4}
             baseNodeTypeFilter={''}
+            options={{enableSearch: true}}
             selectedTreeNodeIds={editor.getSelectedNodeIds()}
             onSelect={onSelectTreeNode}
         />
