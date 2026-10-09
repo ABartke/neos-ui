@@ -19,6 +19,8 @@ export const createReferencesEditor = () => (props) => {
     const workspaceName = useSelector(selectors.CR.Workspaces.personalWorkspaceNameSelector);
     const dimension = useSelector(selectors.CR.ContentDimensions.active);
     const selectedNodeId = useSelector(selectors.CR.Nodes.focusedSelector);
+    // the secondary inspector toggles when opened twice, so adding and editing is disabled while it is open
+    const isSecondaryInspectorOpen = useSelector(selectors.UI.Inspector.shouldShowSecondaryInspector) ?? false;
     const dispatch = useDispatch();
 
     const editor$ = React.useMemo(() => createState(Editor.fromLoadingState(props.value.referencesCount)), []);
@@ -140,6 +142,7 @@ export const createReferencesEditor = () => (props) => {
                                     key={reference.targetNodeId}
                                     // references without declared properties have nothing to edit
                                     onEdit={editor.hasPropertySchema() ? () => onEdit(reference.targetNodeId) : undefined}
+                                    isEditDisabled={isSecondaryInspectorOpen}
                                     onDelete={() => onDelete(reference.targetNodeId)}
                                 >
                                     <IconCard
@@ -156,7 +159,7 @@ export const createReferencesEditor = () => (props) => {
                         );
                     })
             }
-            <Button onClick={openSecondaryEditor}>Neues Item</Button>
+            <Button disabled={isSecondaryInspectorOpen} onClick={openSecondaryEditor}>Neues Item</Button>
             {
                 editor.isReferencePropertyEditingOpen() && <ReferencesPropertiesDialog editor$={editor$} />
             }

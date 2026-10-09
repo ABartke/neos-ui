@@ -4,11 +4,12 @@ import style from './style.module.css';
 
 interface HoverActionsProps {
     onEdit?: () => void;
+    isEditDisabled?: boolean;
     onDelete?: () => void;
     // optionally control visibility externally in future; for now purely hover-based
 }
 
-export const HoverActions: React.FC<PropsWithChildren<HoverActionsProps>> = ({children, onEdit, onDelete}) => {
+export const HoverActions: React.FC<PropsWithChildren<HoverActionsProps>> = ({children, onEdit, isEditDisabled, onDelete}) => {
     return (
         <div className={style.wrapper}>
             {children}
@@ -18,6 +19,7 @@ export const HoverActions: React.FC<PropsWithChildren<HoverActionsProps>> = ({ch
                         icon="arrows-left-right-to-line"
                         hoverStyle="brand"
                         title="Edit"
+                        disabled={isEditDisabled}
                         onClick={onEdit}
                         size="regular"
                     />
